@@ -1,0 +1,3 @@
+env/*
+.env
+speaker-diarization-3.1/*
