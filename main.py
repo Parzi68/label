@@ -145,8 +145,10 @@ CORS(app)
 UPLOAD_FOLDER = 'uploads'
 VOICE_SAMPLES_FOLDER = os.path.join(UPLOAD_FOLDER, 'voice_samples')
 AUDIO_FOLDER = os.path.join(UPLOAD_FOLDER, 'audio')
+OUTPUT_FOLDER = 'output'
 os.makedirs(VOICE_SAMPLES_FOLDER, exist_ok=True)
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=False)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -293,6 +295,14 @@ def identify_speakers_route():
     audio_file.save(audio_path)
     
     results = diarize_and_identify(audio_path)
+    
+    # Create output text file
+    output_filename = os.path.splitext(filename)[0] + '.txt'
+    output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+    with open(output_path, 'w') as f:
+        for result in results:
+            f.write(result + '\n')
+    
     os.remove(audio_path)
     return jsonify(results)
 
@@ -310,6 +320,14 @@ def diarize_and_identify_route():
     audio_file.save(audio_path)
     
     results = diarize_and_identify(audio_path)
+    
+    # Create output text file
+    output_filename = os.path.splitext(filename)[0] + '.txt'
+    output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+    with open(output_path, 'w') as f:
+        for result in results:
+            f.write(result + '\n')
+    
     os.remove(audio_path)
     return jsonify(results)
 
